@@ -2,7 +2,6 @@
 
 namespace Paginator;
 
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query;
 
@@ -41,7 +40,7 @@ class Paginator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param string $fieldName
 	 * @param QueryBuilder $qb
 	 * @return string
@@ -63,7 +62,7 @@ class Paginator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param QueryBuilder $qb
 	 * @param string $groupOperand
 	 * @param string $fieldName
@@ -185,7 +184,7 @@ class Paginator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return number
 	 */
 	private function firstResult()
@@ -194,7 +193,7 @@ class Paginator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param PaginatableQueryInterface $query
 	 * @return \Paginator\Paginator
 	 */
@@ -261,20 +260,22 @@ class Paginator {
 		}
 
 		// total items
+		// the count copy MUST be created after the order-spec handling above:
+		// the copy carries the order parts, so resetting them here removes
+		// sorting from the count query only - the list query keeps its order
 		$countQb = clone $qb;
+		$countQb->resetDQLPart('orderBy');
 		$aliases = $countQb->getAllAliases();
-		try{
-		    $this->totalItems = $countQb->select("COUNT('{$aliases[0]}')")
+		if (!empty($countQb->getDQLPart('groupBy'))) {
+		    // the query returns one row per group; total items == number of groups
+		    $rows = $countQb->select("COUNT('{$aliases[0]}')")
+		    ->getQuery()
+		    ->getScalarResult();
+		    $this->totalItems = (int) \count($rows);
+		} else {
+		    $this->totalItems = (int) $countQb->select("COUNT('{$aliases[0]}')")
 		    ->getQuery()
 		    ->getSingleScalarResult();
-		} catch (\Exception $e){
-		    if($e instanceof NonUniqueResultException){
-		        $totalItems = $countQb->select("COUNT('{$aliases[0]}')")
-		        ->getQuery()
-		        ->getScalarResult();
-		        end($totalItems);
-		        $this->totalItems = key($totalItems)+1;
-		    }
 		}
 		$this->totalPages = ceil($this->totalItems / $this->request->getItemCount());
 
@@ -308,7 +309,7 @@ class Paginator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return array
 	 */
 	public function getPaginatedResult()
@@ -317,7 +318,7 @@ class Paginator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return int
 	 */
 	public function getPageNumber()
@@ -344,7 +345,7 @@ class Paginator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function getSeparator()

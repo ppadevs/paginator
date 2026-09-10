@@ -1,0 +1,68 @@
+{
+  "ticket_id": "",
+  "ticket_author": "hr00021118",
+  "ticket_created_at": "2026-09-08T13:15:07Z",
+  "ticket_text": "Option A from research.md (same folder): apply only the two safe count-query fixes in Paginator::paginate() - (1) resetDQLPart('orderBy') on the count clone so ORDER BY never executes in the COUNT query, (2) replace the exception-driven double execution with an explicit groupBy branch (single count execution). No count cache (Fix 3), no distinctCount flag (Fix 4).",
+  "ticket_approved_by": "",
+  "ticket_approved_at": "",
+  "authors": ["Juras"],
+  "systems": ["paginator"],
+  "testing": [],
+  "production": [],
+  "feature_name": "paginatorCountFixes",
+  "branch": "hotfix-paginatorCountFixes",
+  "created_at": "2026-09-08T13:15:07Z",
+  "updated_at": "2026-09-09T08:30:55Z",
+  "language": "en",
+  "phase": "tasks-generated",
+  "summary": "Fix the paginator count query: strip ORDER BY from the count clone and execute grouped counts once via an explicit groupBy branch (research Option A).",
+  "files_changed": ["src/Paginator/Paginator.php"],
+  "approvals": {
+    "requirements": {
+      "generated": true,
+      "approved": true,
+      "approved_at": "2026-09-08T13:26:41Z",
+      "approved_by": "hr00021118"
+    },
+    "design": {
+      "generated": true,
+      "approved": true,
+      "approved_at": "2026-09-08T13:36:06Z",
+      "approved_by": "hr00021118"
+    },
+    "tasks": {
+      "generated": true,
+      "approved": true,
+      "details": {
+        "01-01": {
+          "file": "01-01-strip-sorting-from-count-query.md",
+          "generated": true,
+          "approved": true,
+          "implemented": true
+        },
+        "01-02": {
+          "file": "01-02-single-execution-grouped-count.md",
+          "generated": true,
+          "approved": true,
+          "implemented": true
+        },
+        "02-01": {
+          "file": "02-01-verify-totals-parity-and-single-execution.md",
+          "generated": true,
+          "approved": true,
+          "implemented": false
+        },
+        "02-02": {
+          "file": "02-02-confirm-unchanged-public-surface.md",
+          "generated": true,
+          "approved": true,
+          "implemented": false
+        }
+      }
+    }
+  },
+  "task_details": {
+    "include_testing": false
+  },
+  "ready_for_implementation": true
+}
